@@ -44,6 +44,45 @@ release version branch in version.php to something else than "stable".
 
 Code signing is optional for all third-party applications.
 
+== Possible Errors
+
+Please don’t modify the mentioned `signature.json` itself.
+
+The following errors can be encountered when trying to verify a code
+signature.
+
+* `INVALID_HASH`
+** The file has a different hash than specified within `signature.json`.
+This usually happens when the file has been modified after writing the
+signature data.
+* `FILE_MISSING`
+** The file cannot be found but has been specified within
+`signature.json`. Either a required file has been left out, or
+`signature.json` needs to be edited.
+* `EXTRA_FILE`
+** The file does not exist in `signature.json`. This usually happens
+when a file has been removed and `signature.json` has not been updated.
+It also happens if you have placed additional files in your ownCloud
+installation folder.
+* `EXCEPTION`
+** Another exception has prevented the code verification. There are
+currently these following exceptions:
+*** `Signature data not found.`
+**** The app has mandatory code signing enforced but no `signature.json`
+file has been found in its `appinfo` folder.
+*** `Certificate is not valid.`
+**** The certificate has not been issued by the official ownCloud Code
+Signing Root Authority.
+*** `Certificate is not valid for required scope. (Requested: %s, current: %s)`
+**** The certificate is not valid for the defined application.
+Certificates are only valid for the defined app identifier and cannot be
+used for others.
+*** `Signature could not get verified.`
+**** There was a problem with verifying the signature of
+`signature.json`.
+*** `Certificate has been revoked.`
+**** The certificate which was used to sign the application was revoked.
+
 == Fixing Invalid Code Integrity Messages
 
 A code integrity error message (`There were problems with the code integrity check. More information…`)
@@ -214,41 +253,3 @@ occ integrity:check-app $appid
 
 TIP: See xref:configuration/server/occ_command.adoc[the occ command] to learn more about using `occ`.
 
-== Errors
-
-Please don’t modify the mentioned `signature.json` itself.
-
-The following errors can be encountered when trying to verify a code
-signature.
-
-* `INVALID_HASH`
-** The file has a different hash than specified within `signature.json`.
-This usually happens when the file has been modified after writing the
-signature data.
-* `FILE_MISSING`
-** The file cannot be found but has been specified within
-`signature.json`. Either a required file has been left out, or
-`signature.json` needs to be edited.
-* `EXTRA_FILE`
-** The file does not exist in `signature.json`. This usually happens
-when a file has been removed and `signature.json` has not been updated.
-It also happens if you have placed additional files in your ownCloud
-installation folder.
-* `EXCEPTION`
-** Another exception has prevented the code verification. There are
-currently these following exceptions:
-*** `Signature data not found.`
-**** The app has mandatory code signing enforced but no `signature.json`
-file has been found in its `appinfo` folder.
-*** `Certificate is not valid.`
-**** The certificate has not been issued by the official ownCloud Code
-Signing Root Authority.
-*** `Certificate is not valid for required scope. (Requested: %s, current: %s)`
-**** The certificate is not valid for the defined application.
-Certificates are only valid for the defined app identifier and cannot be
-used for others.
-*** `Signature could not get verified.`
-**** There was a problem with verifying the signature of
-`signature.json`.
-*** `Certificate has been revoked.`
-**** The certificate which was used to sign the application was revoked.
